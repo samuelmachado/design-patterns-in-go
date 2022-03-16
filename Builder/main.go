@@ -138,7 +138,52 @@ func (it *PersonAddressBuilder) WithPostcode(
 	return it
 }
 
+// EXER 3
+type email struct {
+	from, to, subject, body string
+}
+
+type EmailBuilder struct {
+	email email
+}
+
+func (b *EmailBuilder) From(from string) *EmailBuilder {
+	if !strings.Contains(from, "@") {
+		panic("email should contain @")
+	}
+	b.email.from = from
+	return b
+}
+
+func (b *EmailBuilder) To(to string) *EmailBuilder {
+	b.email.to = to
+	return b
+}
+
+func (b *EmailBuilder) Subject(subject string) *EmailBuilder {
+	b.email.subject = subject
+	return b
+}
+
+func (b *EmailBuilder) Body(body string) *EmailBuilder {
+	b.email.body = body
+	return b
+}
+
+func sendMailImpl(email *email) {
+	// actually ends the email
+}
+
+type build func(*EmailBuilder)
+
+func SendEmail(action build) {
+	builder := EmailBuilder{}
+	action(&builder)
+	sendMailImpl(&builder.email)
+}
+
 func main() {
+	//exer 1
 	hello := "hello"
 
 	sb := strings.Builder{}
@@ -166,6 +211,7 @@ func main() {
 	b.AddChildFluent("li", "a").AddChildFluent("li", "b")
 	fmt.Println(b.String())
 
+	//exer 2
 	pb := NewPersonBuilder()
 	pb.
 		Lives().
@@ -178,4 +224,12 @@ func main() {
 		Earning(123000)
 	person := pb.Build()
 	fmt.Println(*person)
+
+	//exer 3
+	SendEmail(func(b *EmailBuilder) {
+		b.From("foo@bar.com").
+			To("bar@baz.com").
+			Subject("Meeting").
+			Body("Hello, do you want to meet?")
+	})
 }
